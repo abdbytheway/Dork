@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DorkFinder Pro - Advanced Web Search</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4285f4;
+            --secondary-color: #ea4335;
+            --accent-color: #fbbc05;
+            --success-color: #34a853;
+            --dark-color: #202124;
+            --light-color: #f8f9fa;
+            --border-color: #dadce0;
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --hover-color: #f0f7ff;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+        
+        body {
+            background-color: var(--light-color);
+            color: var(--dark-color);
+            line-height: 1.6;
+            background-image: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            animation: fadeIn 1s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .logo {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            letter-spacing: -1px;
+        }
+        
+        .logo span {
+            color: var(--secondary-color);
+        }
+        
+        .subtitle {
+            color: var(--dark-color);
+            font-weight: 300;
+            margin-bottom: 1.5rem;
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .disclaimer {
+            background-color: rgba(255, 243, 205, 0.9);
+            border-left: 4px solid var(--accent-color);
+            padding: 1rem 1.5rem;
+            margin-bottom: 2rem;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            box-shadow: var(--card-shadow);
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .search-card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            padding: 2.5rem;
+            margin-bottom: 2.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .search-card:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color), var(--accent-color), var(--success-color));
+        }
+        
+        .form-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 2rem;
+        }
+        
+        .form-tab {
+            padding: 0.8rem 1.5rem;
+            font-weight: 500;
+            cursor: pointer;
+            color: #5f6368;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .form-tab.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+        
+        .search-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.8rem;
+        }
+        
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+        
+        label {
+            font-weight: 500;
+            color: var(--dark-color);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        label i {
+            color: var(--primary-color);
+        }
+        
+        input[type="text"], select, textarea {
+            padding: 1rem 1.2rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            background-color: #fafafa;
+        }
+        
+        input[type="text"]:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.2);
+            background-color: white;
+        }
+        
+        .search-term-container {
+            position: relative;
+        }
+        
+        .search-term-container i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #5f6368;
+        }
+        
+        .search-term-input {
+            padding-left: 2.8rem !important;
+        }
+        
+        .checkbox-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+        
+        .checkbox-group {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s;
+        }
+        
+        .checkbox-group:hover {
+            background-color: var(--hover-color);
+            border-color: var(--primary-color);
+        }
+        
+        .checkbox-group label {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-weight: normal;
+            cursor: pointer;
+        }
+        
+        .checkbox-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary-color);
+        }
+        
+        .checkbox-description {
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            color: #5f6368;
+            margin-left: 2.3rem;
+        }
+        
+        .additional-options {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 1.2rem;
+            margin-top: 0.8rem;
+            border: 1px solid var(--border-color);
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        
+        .search-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        button {
+            padding: 0.9rem 1.8rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .primary-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .primary-btn:hover {
+            background-color: #3367d6;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        .secondary-btn {
+            background-color: white;
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+        }
+        
+        .secondary-btn:hover {
+            background-color: rgba(66, 133, 244, 0.08);
+            transform: translateY(-2px);
+        }
+        
+        .results-container {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            padding: 2.5rem;
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+            margin-bottom: 2.5rem;
+        }
+        
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.8rem;
+            padding-bottom: 1.2rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .result-count {
+            font-weight: 600;
+            color: var(--dark-color);
+            font-size: 1.2rem;
+        }
+        
+        .result-actions {
+            display: flex;
+            gap: 0.8rem;
+        }
+        
+        .dork-query {
+            background-color: #f5f7fa;
+            padding: 1.2rem;
+            border-radius: 8px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            margin-bottom: 1.5rem;
+            overflow-x: auto;
+            word-break: break-all;
+            border: 1px solid var(--border-color);
+            color: #333;
+            font-size: 0.95rem;
+            position: relative;
+        }
+        
+        .copied-message {
+            position: absolute;
+            right: 1rem;
+            top: -2.5rem;
+            background-color: var(--success-color);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .copied-message.show {
+            opacity: 1;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 2.5rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-color);
+            color: #5f6368;
+            font-size: 0.95rem;
+        }
+        
+        .disclaimer-footer {
+            margin-top: 0.8rem;
+            font-size: 0.85rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .search-card, .results-container {
+                padding: 1.5rem;
+            }
+            
+            .checkbox-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .search-buttons {
+                flex-direction: column;
+            }
+            
+            .form-tabs {
+                flex-wrap: wrap;
+            }
+            
+            .form-tab {
+                flex: 1;
+                text-align: center;
+                padding: 0.6rem 0.8rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">Dork<span>Finder</span> <span style="font-size: 1.2rem; vertical-align: super;">PRO</span></div>
+            <p class="subtitle">Advanced search engine to discover indexed content across the web</p>
+            <div class="disclaimer">
+                <strong><i class="fas fa-shield-alt"></i> Disclaimer:</strong> This tool generates advanced search queries for publicly indexed content. Use responsibly and ethically for legitimate purposes only.
+            </div>
+        </header>
+
+        <div class="search-card">
+            <div class="form-tabs">
+                <div class="form-tab active" data-tab="basic"><i class="fas fa-search"></i> Basic Search</div>
+                <div class="form-tab" data-tab="advanced"><i class="fas fa-cogs"></i> Advanced</div>
+            </div>
+
+            <form id="dork-form" class="search-form">
+                <div class="tab-content" id="basic-tab">
+                    <div class="input-group">
+                        <label for="search-term"><i class="fas fa-keyboard"></i> Search Term</label>
+                        <div class="search-term-container">
+                            <i class="fas fa-search"></i>
+                            <input 
+                                type="text" 
+                                id="search-term" 
+                                class="search-term-input"
+                                placeholder="Enter keyword or phrase" 
+                                required
+                            >
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <div class="checkbox-container">
+                            <div class="checkbox-group">
+                                <label>
+                                    <input type="checkbox" id="quote-search-term" name="quote-option">
+                                    Exact Match (Add Quotes)
+                                </label>
+                                <div class="checkbox-description">
+                                    Wrap search term in quotation marks for exact matches
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label><i class="fas fa-filter"></i> Search Techniques</label>
+                        <div class="checkbox-container">
+                            <div class="checkbox-group">
+                                <label><input type="checkbox" name="dork-option" value="filetype"> File Type</label>
+                                <div class="checkbox-description">Find specific file types</div>
+                            </div>
+                            <div class="checkbox-group">
+                                <label><input type="checkbox" name="dork-option" value="site"> Site Specific</label>
+                                <div class="checkbox-description">Limit to specific domains</div>
+                            </div>
+                            <div class="checkbox-group">
+                                <label><input type="checkbox" name="dork-option" value="inurl"> In URL</label>
+                                <div class="checkbox-description">Terms in URL</div>
+                            </div>
+                            <div class="checkbox-group">
+                                <label><input type="checkbox" name="dork-option" value="intitle"> In Title</label>
+                                <div class="checkbox-description">Terms in page title</div>
+                            </div>
+                            <div class="checkbox-group">
+                                <label><input type="checkbox" name="dork-option" value="cache"> Cached Pages</label>
+                                <div class="checkbox-description">View cached versions</div>
+                            </div>
+                            <div class="checkbox-group">
+                                <label><input type="checkbox" name="dork-option" value="intext"> In Text</label>
+                                <div class="checkbox-description">Search page content</div>
+                            </div>
+                            <div class="checkbox-group">
+                                <label><input type="checkbox" name="dork-option" value="ext"> File Extension</label>
+                                <div class="checkbox-description">Custom file extensions</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="filetype-options" class="additional-options" style="display: none;">
+                        <div class="input-group">
+                            <label for="filetype-select"><i class="fas fa-file-alt"></i> Select File Type</label>
+                            <select id="filetype-select">
+                                <option value="pdf">PDF</option>
+                                <option value="doc">DOC</option>
+                                <option value="docx">DOCX</option>
+                                <option value="xls">XLS</option>
+                                <option value="txt">TXT</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="site-options" class="additional-options" style="display: none;">
+                        <div class="input-group">
+                            <label for="site-input"><i class="fas fa-globe"></i> Domain/Website</label>
+                            <input type="text" id="site-input" placeholder="e.g., example.com">
+                        </div>
+                    </div>
+
+                    <div id="ext-options" class="additional-options" style="display: none;">
+                        <div class="input-group">
+                            <label for="ext-input"><i class="fas fa-file-code"></i> File Extension</label>
+                            <input type="text" id="ext-input" placeholder="e.g., php, html, css">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="advanced-tab" style="display: none;">
+                    <div class="input-group">
+                        <label for="exclude-terms"><i class="fas fa-minus-circle"></i> Exclude Terms</label>
+                        <input type="text" id="exclude-terms" placeholder="Terms to exclude (comma-separated)">
+                    </div>
+                    <div class="input-group">
+                        <label for="exact-phrase"><i class="fas fa-quote-right"></i> Exact Phrase</label>
+                        <input type="text" id="exact-phrase" placeholder="Search for an exact phrase">
+                    </div>
+                </div>
+
+                <div class="search-buttons">
+                    <button type="submit" class="primary-btn"><i class="fas fa-search"></i> Generate</button>
+                    <button type="reset" class="secondary-btn"><i class="fas fa-undo"></i> Reset</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="results-container" id="results">
+            <div class="results-header">
+                <div class="result-count">Generated Query</div>
+                <div class="result-actions">
+                    <button class="secondary-btn" id="yahoo-btn"><i class="fas fa-search"></i> Search Yahoo</button>
+                    <button class="secondary-btn" id="copy-btn"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+            </div>
+            <div class="dork-query" id="generated-query"></div>
+            <div class="copied-message" id="copied-message">Copied!</div>
+        </div>
+
+        <footer>
+            <p>© 2025 DorkFinder Pro - Powered by xAI</p>
+            <div class="disclaimer-footer">
+                For educational purposes only. Respect privacy and terms of service when using generated queries.
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        const tabs = document.querySelectorAll('.form-tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const checkboxes = document.querySelectorAll('input[name="dork-option"]');
+        const form = document.getElementById('dork-form');
+        const results = document.getElementById('results');
+        const generatedQuery = document.getElementById('generated-query');
+        const copyBtn = document.getElementById('copy-btn');
+        const yahooBtn = document.getElementById('yahoo-btn');
+        const copiedMessage = document.getElementById('copied-message');
+        const quoteCheckbox = document.getElementById('quote-search-term');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                tabContents.forEach(content => content.style.display = 'none');
+                document.getElementById(`${tab.dataset.tab}-tab`).style.display = 'block';
+            });
+        });
+
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', () => {
+                const optionsDiv = document.getElementById(`${checkbox.value}-options`);
+                if (optionsDiv) {
+                    optionsDiv.style.display = checkbox.checked ? 'block' : 'none';
+                }
+            });
+        });
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            let query = '';
+            let searchTerm = document.getElementById('search-term').value.trim();
+
+            if (searchTerm) {
+                if (quoteCheckbox.checked) {
+                    searchTerm = `"${searchTerm}"`;
+                }
+                query += searchTerm + ' ';
+
+                checkboxes.forEach(checkbox => {
+                    if (checkbox.checked) {
+                        switch(checkbox.value) {
+                            case 'filetype':
+                                const filetype = document.getElementById('filetype-select').value;
+                                query += `filetype:${filetype} `;
+                                break;
+                            case 'site':
+                                const site = document.getElementById('site-input').value.trim();
+                                if (site) query += `site:${site} `;
+                                break;
+                            case 'inurl':
+                                query += `inurl:${searchTerm.replace(/"/g, '')} `;
+                                break;
+                            case 'intitle':
+                                query += `intitle:${searchTerm.replace(/"/g, '')} `;
+                                break;
+                            case 'cache':
+                                query += `cache:${searchTerm.replace(/"/g, '')} `;
+                                break;
+                            case 'intext':
+                                query += `intext:${searchTerm.replace(/"/g, '')} `;
+                                break;
+                            case 'ext':
+                                const ext = document.getElementById('ext-input').value.trim();
+                                if (ext) query += `ext:${ext} `;
+                                break;
+                        }
+                    }
+                });
+
+                const excludeTerms = document.getElementById('exclude-terms').value.trim();
+                if (excludeTerms) {
+                    query += excludeTerms.split(',').map(t => `-${t.trim()}`).join(' ') + ' ';
+                }
+
+                const exactPhrase = document.getElementById('exact-phrase').value.trim();
+                if (exactPhrase) {
+                    query += `"${exactPhrase}" `;
+                }
+
+                generatedQuery.textContent = query.trim();
+                results.style.display = 'block';
+                window.scrollTo({ top: results.offsetTop - 20, behavior: 'smooth' });
+            }
+        });
+
+        copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(generatedQuery.textContent);
+            copiedMessage.classList.add('show');
+            setTimeout(() => copiedMessage.classList.remove('show'), 2000);
+        });
+
+        yahooBtn.addEventListener('click', () => {
+            const query = encodeURIComponent(generatedQuery.textContent);
+            window.open(`https://search.yahoo.com/search?p=${query}`, '_blank');
+        });
+
+        form.addEventListener('reset', () => {
+            results.style.display = 'none';
+            tabContents.forEach(content => content.style.display = 'none');
+            document.getElementById('basic-tab').style.display = 'block';
+            tabs.forEach(t => t.classList.remove('active'));
+            tabs[0].classList.add('active');
+            document.querySelectorAll('.additional-options').forEach(opt => opt.style.display = 'none');
+            checkboxes.forEach(cb => cb.checked = false);
+            quoteCheckbox.checked = false;
+        });
+    </script>
+</body>
+</html>
