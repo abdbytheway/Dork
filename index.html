@@ -5,399 +5,556 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DorkFinder Pro - Advanced Web Search</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #4285f4;
-            --secondary-color: #ea4335;
-            --accent-color: #fbbc05;
-            --success-color: #34a853;
-            --dark-color: #202124;
-            --light-color: #f8f9fa;
-            --border-color: #dadce0;
-            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            --hover-color: #f0f7ff;
+            --bg: #080b10;
+            --surface: #0d1117;
+            --surface2: #161b24;
+            --border: #1e2733;
+            --border-bright: #2a3545;
+            --cyan: #00e5ff;
+            --cyan-dim: rgba(0, 229, 255, 0.15);
+            --cyan-glow: rgba(0, 229, 255, 0.4);
+            --green: #00ff88;
+            --green-dim: rgba(0, 255, 136, 0.1);
+            --orange: #ff6b35;
+            --orange-dim: rgba(255, 107, 53, 0.12);
+            --yellow: #ffd700;
+            --text: #c9d4e0;
+            --text-dim: #5a6a7e;
+            --text-bright: #e8f0f8;
         }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Arial, sans-serif;
-        }
-        
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
-            background-color: var(--light-color);
-            color: var(--dark-color);
-            line-height: 1.6;
-            background-image: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Syne', sans-serif;
             min-height: 100vh;
+            overflow-x: hidden;
         }
-        
+
+        /* Animated grid background */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Radial glow orb */
+        body::after {
+            content: '';
+            position: fixed;
+            top: -20%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 900px;
+            height: 500px;
+            background: radial-gradient(ellipse, rgba(0,229,255,0.06) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
         .container {
-            max-width: 1200px;
+            max-width: 900px;
             margin: 0 auto;
-            padding: 2rem;
+            padding: 2.5rem 2rem;
+            position: relative;
+            z-index: 1;
         }
-        
+
+        /* ── HEADER ── */
         header {
             text-align: center;
-            margin-bottom: 2.5rem;
-            animation: fadeIn 1s ease-in-out;
+            margin-bottom: 3rem;
+            animation: slideDown 0.8s cubic-bezier(0.22,1,0.36,1) both;
         }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
-        
+
+        .logo-wrap {
+            display: inline-flex;
+            align-items: baseline;
+            gap: 0.3rem;
+            margin-bottom: 0.8rem;
+        }
+
         .logo {
-            font-size: 3rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 2.8rem;
             font-weight: 700;
-            margin-bottom: 0.5rem;
-            color: var(--primary-color);
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-            letter-spacing: -1px;
+            color: var(--text-bright);
+            letter-spacing: -2px;
         }
-        
-        .logo span {
-            color: var(--secondary-color);
+
+        .logo .accent { color: var(--cyan); }
+
+        .logo-badge {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.75rem;
+            font-weight: 700;
+            background: var(--cyan);
+            color: var(--bg);
+            padding: 3px 8px;
+            border-radius: 3px;
+            letter-spacing: 2px;
+            vertical-align: super;
         }
-        
+
         .subtitle {
-            color: var(--dark-color);
-            font-weight: 300;
+            color: var(--text-dim);
+            font-size: 1rem;
+            font-weight: 400;
+            letter-spacing: 0.02em;
             margin-bottom: 1.5rem;
-            font-size: 1.2rem;
-            max-width: 700px;
-            margin-left: auto;
-            margin-right: auto;
         }
-        
+
         .disclaimer {
-            background-color: rgba(255, 243, 205, 0.9);
-            border-left: 4px solid var(--accent-color);
-            padding: 1rem 1.5rem;
-            margin-bottom: 2rem;
-            border-radius: 8px;
-            font-size: 0.95rem;
-            box-shadow: var(--card-shadow);
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.7rem;
+            background: linear-gradient(135deg, rgba(255,215,0,0.06), rgba(255,107,53,0.06));
+            border: 1px solid rgba(255,215,0,0.2);
+            padding: 0.75rem 1.2rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            color: rgba(255,215,0,0.8);
+            max-width: 680px;
         }
-        
+
+        .disclaimer i { color: var(--yellow); font-size: 0.9rem; flex-shrink: 0; }
+
+        /* ── CARD ── */
         .search-card {
-            background-color: white;
+            background: var(--surface);
+            border: 1px solid var(--border);
             border-radius: 12px;
-            box-shadow: var(--card-shadow);
-            padding: 2.5rem;
-            margin-bottom: 2.5rem;
-            transition: all 0.3s ease;
-            position: relative;
+            padding: 0;
+            margin-bottom: 2rem;
             overflow: hidden;
+            animation: fadeUp 0.8s 0.15s cubic-bezier(0.22,1,0.36,1) both;
+            box-shadow: 0 0 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(0,229,255,0.04) inset;
         }
-        
-        .search-card:before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color), var(--accent-color), var(--success-color));
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
-        
+
+        /* ── TABS ── */
         .form-tabs {
             display: flex;
-            border-bottom: 1px solid var(--border-color);
-            margin-bottom: 2rem;
+            background: var(--bg);
+            border-bottom: 1px solid var(--border);
+            padding: 0 2rem;
+            gap: 0;
         }
-        
+
         .form-tab {
-            padding: 0.8rem 1.5rem;
-            font-weight: 500;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.8rem;
+            letter-spacing: 0.08em;
+            padding: 1rem 1.5rem;
             cursor: pointer;
-            color: #5f6368;
-            border-bottom: 3px solid transparent;
-            transition: all 0.3s;
+            color: var(--text-dim);
+            border-bottom: 2px solid transparent;
+            transition: all 0.25s;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
-        
+
+        .form-tab i { font-size: 0.75rem; }
+
+        .form-tab:hover { color: var(--text); }
+
         .form-tab.active {
-            color: var(--primary-color);
-            border-bottom-color: var(--primary-color);
+            color: var(--cyan);
+            border-bottom-color: var(--cyan);
         }
-        
+
+        .form-tab.active i { color: var(--cyan); }
+
+        /* ── FORM BODY ── */
         .search-form {
             display: flex;
             flex-direction: column;
             gap: 1.8rem;
+            padding: 2rem;
         }
-        
-        .input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.6rem;
-        }
-        
+
+        .input-group { display: flex; flex-direction: column; gap: 0.6rem; }
+
         label {
-            font-weight: 500;
-            color: var(--dark-color);
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-dim);
             display: flex;
             align-items: center;
             gap: 0.5rem;
         }
-        
-        label i {
-            color: var(--primary-color);
-        }
-        
+
+        label i { color: var(--cyan); font-size: 0.75rem; }
+
         input[type="text"], select, textarea {
-            padding: 1rem 1.2rem;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: all 0.3s;
-            background-color: #fafafa;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.9rem;
+            padding: 0.85rem 1.1rem;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-bright);
+            transition: border-color 0.2s, box-shadow 0.2s;
         }
-        
+
+        input[type="text"]::placeholder { color: var(--text-dim); }
+
         input[type="text"]:focus, select:focus, textarea:focus {
             outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.2);
-            background-color: white;
+            border-color: var(--cyan);
+            box-shadow: 0 0 0 3px var(--cyan-dim), 0 0 20px rgba(0,229,255,0.06);
+            background: #0f1520;
         }
-        
-        .search-term-container {
-            position: relative;
+
+        select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235a6a7e' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            padding-right: 2.5rem;
         }
-        
-        .search-term-container i {
+
+        select option { background: var(--surface2); }
+
+        /* Search term with icon */
+        .search-term-container { position: relative; }
+
+        .search-term-container > i {
             position: absolute;
             left: 1rem;
             top: 50%;
             transform: translateY(-50%);
-            color: #5f6368;
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            pointer-events: none;
         }
-        
-        .search-term-input {
-            padding-left: 2.8rem !important;
-        }
-        
+
+        .search-term-input { padding-left: 2.8rem !important; }
+
+        /* ── CHECKBOXES ── */
         .checkbox-container {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 1rem;
-            margin-top: 0.5rem;
+            grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+            gap: 0.6rem;
         }
-        
+
         .checkbox-group {
-            background-color: #f8f9fa;
-            border-radius: 8px;
-            padding: 1rem;
-            border: 1px solid var(--border-color);
-            transition: all 0.3s;
-        }
-        
-        .checkbox-group:hover {
-            background-color: var(--hover-color);
-            border-color: var(--primary-color);
-        }
-        
-        .checkbox-group label {
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-            font-weight: normal;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.9rem 1rem;
+            transition: border-color 0.2s, background 0.2s;
             cursor: pointer;
         }
-        
+
+        .checkbox-group:hover {
+            border-color: var(--border-bright);
+            background: #111820;
+        }
+
+        .checkbox-group:has(input:checked) {
+            border-color: var(--cyan);
+            background: var(--cyan-dim);
+        }
+
+        .checkbox-group label {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text);
+            text-transform: none;
+            letter-spacing: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            cursor: pointer;
+        }
+
+        .checkbox-group:has(input:checked) label { color: var(--cyan); }
+
         .checkbox-group input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            accent-color: var(--primary-color);
+            width: 15px;
+            height: 15px;
+            accent-color: var(--cyan);
+            cursor: pointer;
+            flex-shrink: 0;
         }
-        
+
         .checkbox-description {
-            font-size: 0.85rem;
-            margin-top: 0.5rem;
-            color: #5f6368;
-            margin-left: 2.3rem;
+            font-size: 0.75rem;
+            margin-top: 0.35rem;
+            color: var(--text-dim);
+            margin-left: 1.8rem;
+            font-family: inherit;
         }
-        
+
+        /* ── ADDITIONAL OPTIONS ── */
         .additional-options {
-            background-color: #f8f9fa;
-            border-radius: 8px;
+            background: rgba(0,229,255,0.04);
+            border: 1px solid rgba(0,229,255,0.15);
+            border-radius: 6px;
             padding: 1.2rem;
-            margin-top: 0.8rem;
-            border: 1px solid var(--border-color);
-            animation: fadeIn 0.3s ease-in-out;
+            margin-top: 0.5rem;
+            animation: fadeUp 0.25s ease both;
         }
-        
+
+        /* ── BUTTONS ── */
         .search-buttons {
             display: flex;
-            gap: 1rem;
-            margin-top: 1.5rem;
+            gap: 0.8rem;
+            padding-top: 0.5rem;
+            border-top: 1px solid var(--border);
+            margin-top: 0.5rem;
         }
-        
+
         button {
-            padding: 0.9rem 1.8rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.82rem;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            padding: 0.85rem 1.6rem;
             border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 500;
+            border-radius: 6px;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.2s;
             display: flex;
             align-items: center;
-            justify-content: center;
             gap: 0.5rem;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
-        
+
         .primary-btn {
-            background-color: var(--primary-color);
-            color: white;
+            background: var(--cyan);
+            color: var(--bg);
+            box-shadow: 0 0 20px rgba(0,229,255,0.25);
         }
-        
+
         .primary-btn:hover {
-            background-color: #3367d6;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            background: #33eaff;
+            box-shadow: 0 0 30px rgba(0,229,255,0.45);
+            transform: translateY(-1px);
         }
-        
+
+        .primary-btn:active { transform: translateY(0); }
+
         .secondary-btn {
-            background-color: white;
-            color: var(--primary-color);
-            border: 1px solid var(--primary-color);
+            background: transparent;
+            color: var(--text-dim);
+            border: 1px solid var(--border);
         }
-        
+
         .secondary-btn:hover {
-            background-color: rgba(66, 133, 244, 0.08);
-            transform: translateY(-2px);
+            color: var(--text);
+            border-color: var(--border-bright);
+            background: var(--surface2);
         }
-        
+
+        /* ── RESULTS ── */
         .results-container {
-            background-color: white;
+            background: var(--surface);
+            border: 1px solid var(--border);
             border-radius: 12px;
-            box-shadow: var(--card-shadow);
-            padding: 2.5rem;
+            padding: 0;
             display: none;
-            animation: fadeIn 0.5s ease-in-out;
-            margin-bottom: 2.5rem;
+            margin-bottom: 2rem;
+            overflow: hidden;
+            animation: fadeUp 0.4s ease both;
+            box-shadow: 0 0 40px rgba(0,229,255,0.05);
         }
-        
+
         .results-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1.8rem;
-            padding-bottom: 1.2rem;
-            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 1.8rem;
+            background: var(--bg);
+            border-bottom: 1px solid var(--border);
         }
-        
-        .result-count {
-            font-weight: 600;
-            color: var(--dark-color);
-            font-size: 1.2rem;
-        }
-        
-        .result-actions {
+
+        .result-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--green);
             display: flex;
-            gap: 0.8rem;
+            align-items: center;
+            gap: 0.5rem;
         }
-        
-        .dork-query {
-            background-color: #f5f7fa;
-            padding: 1.2rem;
-            border-radius: 8px;
-            font-family: 'Consolas', 'Monaco', monospace;
-            margin-bottom: 1.5rem;
-            overflow-x: auto;
-            word-break: break-all;
-            border: 1px solid var(--border-color);
-            color: #333;
-            font-size: 0.95rem;
+
+        .result-label::before {
+            content: '';
+            width: 7px;
+            height: 7px;
+            background: var(--green);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--green);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        .result-actions { display: flex; gap: 0.6rem; }
+
+        .result-actions .secondary-btn {
+            font-size: 0.75rem;
+            padding: 0.55rem 1rem;
+        }
+
+        /* Query output */
+        .query-output-wrap {
+            padding: 1.5rem 1.8rem 1.8rem;
             position: relative;
         }
-        
+
+        .dork-query {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.92rem;
+            line-height: 1.7;
+            color: var(--cyan);
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1.2rem 1.5rem;
+            word-break: break-all;
+            white-space: pre-wrap;
+            position: relative;
+        }
+
+        .dork-query::before {
+            content: '$ query >';
+            display: block;
+            color: var(--text-dim);
+            font-size: 0.75rem;
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.06em;
+        }
+
         .copied-message {
             position: absolute;
-            right: 1rem;
-            top: -2.5rem;
-            background-color: var(--success-color);
-            color: white;
-            padding: 0.5rem 1rem;
+            right: 1.8rem;
+            bottom: calc(100% - 1rem);
+            background: var(--green);
+            color: var(--bg);
+            padding: 0.35rem 0.8rem;
             border-radius: 4px;
-            font-size: 0.9rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
             opacity: 0;
-            transition: opacity 0.3s;
+            transform: translateY(4px);
+            transition: all 0.2s;
+            pointer-events: none;
         }
-        
+
         .copied-message.show {
             opacity: 1;
+            transform: translateY(0);
         }
-        
+
+        /* ── FOOTER ── */
         footer {
             text-align: center;
-            margin-top: 2.5rem;
-            padding-top: 2rem;
-            border-top: 1px solid var(--border-color);
-            color: #5f6368;
-            font-size: 0.95rem;
+            padding: 2rem 0 1rem;
+            border-top: 1px solid var(--border);
+            animation: fadeUp 0.8s 0.4s cubic-bezier(0.22,1,0.36,1) both;
         }
-        
-        .disclaimer-footer {
-            margin-top: 0.8rem;
-            font-size: 0.85rem;
-            max-width: 700px;
-            margin-left: auto;
-            margin-right: auto;
+
+        .footer-brand {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            letter-spacing: 0.06em;
+            margin-bottom: 0.4rem;
         }
-        
-        @media (max-width: 768px) {
-            .container {
-                padding: 1rem;
-            }
-            
-            .search-card, .results-container {
-                padding: 1.5rem;
-            }
-            
-            .checkbox-container {
-                grid-template-columns: 1fr;
-            }
-            
-            .search-buttons {
-                flex-direction: column;
-            }
-            
-            .form-tabs {
-                flex-wrap: wrap;
-            }
-            
-            .form-tab {
-                flex: 1;
-                text-align: center;
-                padding: 0.6rem 0.8rem;
-                font-size: 0.9rem;
-            }
+
+        .footer-brand span { color: var(--cyan); }
+
+        .footer-note {
+            font-size: 0.8rem;
+            color: #2e3d50;
+        }
+
+        /* ── SECTION DIVIDER ── */
+        .section-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--text-dim);
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: -0.5rem;
+        }
+
+        .section-label::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        @media (max-width: 640px) {
+            .container { padding: 1.5rem 1rem; }
+            .logo { font-size: 2rem; }
+            .search-form { padding: 1.5rem; gap: 1.5rem; }
+            .form-tabs { padding: 0 1.5rem; }
+            .checkbox-container { grid-template-columns: 1fr 1fr; }
+            .search-buttons { flex-direction: column; }
+            .results-header { flex-direction: column; align-items: flex-start; gap: 0.8rem; }
+            .disclaimer { text-align: left; }
         }
     </style>
 </head>
 <body>
     <div class="container">
+
         <header>
-            <div class="logo">Dork<span>Finder</span> <span style="font-size: 1.2rem; vertical-align: super;">PRO</span></div>
-            <p class="subtitle">Advanced search engine to discover indexed content across the web</p>
+            <div class="logo-wrap">
+                <div class="logo">Dork<span class="accent">Finder</span></div>
+                <span class="logo-badge">PRO</span>
+            </div>
+            <p class="subtitle">Advanced search query builder for indexed web content</p>
             <div class="disclaimer">
-                <strong><i class="fas fa-shield-alt"></i> Disclaimer:</strong> This tool generates advanced search queries for publicly indexed content. Use responsibly and ethically for legitimate purposes only.
+                <i class="fas fa-shield-halved"></i>
+                <span>Use responsibly for legitimate research and educational purposes only.</span>
             </div>
         </header>
 
         <div class="search-card">
             <div class="form-tabs">
-                <div class="form-tab active" data-tab="basic"><i class="fas fa-search"></i> Basic Search</div>
-                <div class="form-tab" data-tab="advanced"><i class="fas fa-cogs"></i> Advanced</div>
+                <div class="form-tab active" data-tab="basic"><i class="fas fa-terminal"></i> Basic Search</div>
+                <div class="form-tab" data-tab="advanced"><i class="fas fa-sliders"></i> Advanced</div>
             </div>
 
             <form id="dork-form" class="search-form">
@@ -405,14 +562,8 @@
                     <div class="input-group">
                         <label for="search-term"><i class="fas fa-keyboard"></i> Search Term</label>
                         <div class="search-term-container">
-                            <i class="fas fa-search"></i>
-                            <input 
-                                type="text" 
-                                id="search-term" 
-                                class="search-term-input"
-                                placeholder="Enter keyword or phrase" 
-                                required
-                            >
+                            <i class="fas fa-magnifying-glass"></i>
+                            <input type="text" id="search-term" class="search-term-input" placeholder="Enter keyword or phrase" required>
                         </div>
                     </div>
 
@@ -421,17 +572,15 @@
                             <div class="checkbox-group">
                                 <label>
                                     <input type="checkbox" id="quote-search-term" name="quote-option">
-                                    Exact Match (Add Quotes)
+                                    Exact Match
                                 </label>
-                                <div class="checkbox-description">
-                                    Wrap search term in quotation marks for exact matches
-                                </div>
+                                <div class="checkbox-description">Wrap in quotes for exact results</div>
                             </div>
                         </div>
                     </div>
 
                     <div class="input-group">
-                        <label><i class="fas fa-filter"></i> Search Techniques</label>
+                        <div class="section-label"><i class="fas fa-filter"></i> Search Operators</div>
                         <div class="checkbox-container">
                             <div class="checkbox-group">
                                 <label><input type="checkbox" name="dork-option" value="filetype"> File Type</label>
@@ -443,7 +592,7 @@
                             </div>
                             <div class="checkbox-group">
                                 <label><input type="checkbox" name="dork-option" value="inurl"> In URL</label>
-                                <div class="checkbox-description">Terms in URL</div>
+                                <div class="checkbox-description">Terms in URL path</div>
                             </div>
                             <div class="checkbox-group">
                                 <label><input type="checkbox" name="dork-option" value="intitle"> In Title</label>
@@ -466,7 +615,7 @@
 
                     <div id="filetype-options" class="additional-options" style="display: none;">
                         <div class="input-group">
-                            <label for="filetype-select"><i class="fas fa-file-alt"></i> Select File Type</label>
+                            <label for="filetype-select"><i class="fas fa-file"></i> Select File Type</label>
                             <select id="filetype-select">
                                 <option value="pdf">PDF</option>
                                 <option value="doc">DOC</option>
@@ -479,14 +628,14 @@
 
                     <div id="site-options" class="additional-options" style="display: none;">
                         <div class="input-group">
-                            <label for="site-input"><i class="fas fa-globe"></i> Domain/Website</label>
+                            <label for="site-input"><i class="fas fa-globe"></i> Domain / Website</label>
                             <input type="text" id="site-input" placeholder="e.g., example.com">
                         </div>
                     </div>
 
                     <div id="ext-options" class="additional-options" style="display: none;">
                         <div class="input-group">
-                            <label for="ext-input"><i class="fas fa-file-code"></i> File Extension</label>
+                            <label for="ext-input"><i class="fas fa-code"></i> File Extension</label>
                             <input type="text" id="ext-input" placeholder="e.g., php, html, css">
                         </div>
                     </div>
@@ -494,7 +643,7 @@
 
                 <div class="tab-content" id="advanced-tab" style="display: none;">
                     <div class="input-group">
-                        <label for="exclude-terms"><i class="fas fa-minus-circle"></i> Exclude Terms</label>
+                        <label for="exclude-terms"><i class="fas fa-circle-minus"></i> Exclude Terms</label>
                         <input type="text" id="exclude-terms" placeholder="Terms to exclude (comma-separated)">
                     </div>
                     <div class="input-group">
@@ -504,30 +653,31 @@
                 </div>
 
                 <div class="search-buttons">
-                    <button type="submit" class="primary-btn"><i class="fas fa-search"></i> Generate</button>
-                    <button type="reset" class="secondary-btn"><i class="fas fa-undo"></i> Reset</button>
+                    <button type="submit" class="primary-btn"><i class="fas fa-bolt"></i> Generate Query</button>
+                    <button type="reset" class="secondary-btn"><i class="fas fa-rotate-left"></i> Reset</button>
                 </div>
             </form>
         </div>
 
         <div class="results-container" id="results">
             <div class="results-header">
-                <div class="result-count">Generated Query</div>
+                <div class="result-label">Query Generated</div>
                 <div class="result-actions">
-                    <button class="secondary-btn" id="yahoo-btn"><i class="fas fa-search"></i> Search Yahoo</button>
+                    <button class="secondary-btn" id="yahoo-btn"><i class="fas fa-arrow-up-right-from-square"></i> Search Yahoo</button>
                     <button class="secondary-btn" id="copy-btn"><i class="fas fa-copy"></i> Copy</button>
                 </div>
             </div>
-            <div class="dork-query" id="generated-query"></div>
-            <div class="copied-message" id="copied-message">Copied!</div>
+            <div class="query-output-wrap">
+                <div class="dork-query" id="generated-query"></div>
+                <div class="copied-message" id="copied-message">✓ Copied</div>
+            </div>
         </div>
 
         <footer>
-            <p>© 2025 DorkFinder Pro - Powered by xAI</p>
-            <div class="disclaimer-footer">
-                For educational purposes only. Respect privacy and terms of service when using generated queries.
-            </div>
+            <div class="footer-brand">© 2025 <span>DorkFinder Pro</span> — Powered by xAI</div>
+            <div class="footer-note">For educational purposes only. Respect privacy and terms of service.</div>
         </footer>
+
     </div>
 
     <script>
@@ -546,7 +696,7 @@
             tab.addEventListener('click', () => {
                 tabs.forEach(t => t.classList.remove('active'));
                 tab.classList.add('active');
-                tabContents.forEach(content => content.style.display = 'none');
+                tabContents.forEach(c => c.style.display = 'none');
                 document.getElementById(`${tab.dataset.tab}-tab`).style.display = 'block';
             });
         });
@@ -554,9 +704,7 @@
         checkboxes.forEach(checkbox => {
             checkbox.addEventListener('change', () => {
                 const optionsDiv = document.getElementById(`${checkbox.value}-options`);
-                if (optionsDiv) {
-                    optionsDiv.style.display = checkbox.checked ? 'block' : 'none';
-                }
+                if (optionsDiv) optionsDiv.style.display = checkbox.checked ? 'block' : 'none';
             });
         });
 
@@ -566,17 +714,14 @@
             let searchTerm = document.getElementById('search-term').value.trim();
 
             if (searchTerm) {
-                if (quoteCheckbox.checked) {
-                    searchTerm = `"${searchTerm}"`;
-                }
+                if (quoteCheckbox.checked) searchTerm = `"${searchTerm}"`;
                 query += searchTerm + ' ';
 
                 checkboxes.forEach(checkbox => {
                     if (checkbox.checked) {
                         switch(checkbox.value) {
                             case 'filetype':
-                                const filetype = document.getElementById('filetype-select').value;
-                                query += `filetype:${filetype} `;
+                                query += `filetype:${document.getElementById('filetype-select').value} `;
                                 break;
                             case 'site':
                                 const site = document.getElementById('site-input').value.trim();
@@ -608,9 +753,7 @@
                 }
 
                 const exactPhrase = document.getElementById('exact-phrase').value.trim();
-                if (exactPhrase) {
-                    query += `"${exactPhrase}" `;
-                }
+                if (exactPhrase) query += `"${exactPhrase}" `;
 
                 generatedQuery.textContent = query.trim();
                 results.style.display = 'block';
@@ -625,17 +768,16 @@
         });
 
         yahooBtn.addEventListener('click', () => {
-            const query = encodeURIComponent(generatedQuery.textContent);
-            window.open(`https://search.yahoo.com/search?p=${query}`, '_blank');
+            window.open(`https://search.yahoo.com/search?p=${encodeURIComponent(generatedQuery.textContent)}`, '_blank');
         });
 
         form.addEventListener('reset', () => {
             results.style.display = 'none';
-            tabContents.forEach(content => content.style.display = 'none');
+            tabContents.forEach(c => c.style.display = 'none');
             document.getElementById('basic-tab').style.display = 'block';
             tabs.forEach(t => t.classList.remove('active'));
             tabs[0].classList.add('active');
-            document.querySelectorAll('.additional-options').forEach(opt => opt.style.display = 'none');
+            document.querySelectorAll('.additional-options').forEach(o => o.style.display = 'none');
             checkboxes.forEach(cb => cb.checked = false);
             quoteCheckbox.checked = false;
         });
