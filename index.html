@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -524,6 +526,206 @@
             background: var(--border);
         }
 
+        /* ── PASSWORD GATE ── */
+        #password-gate {
+            position: fixed;
+            inset: 0;
+            background: var(--bg);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #password-gate::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+        }
+
+        #password-gate::after {
+            content: '';
+            position: fixed;
+            top: -20%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 900px;
+            height: 500px;
+            background: radial-gradient(ellipse, rgba(0,229,255,0.07) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .gate-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2.5rem 2.8rem;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 0 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(0,229,255,0.05) inset;
+            position: relative;
+            z-index: 1;
+            animation: fadeUp 0.7s cubic-bezier(0.22,1,0.36,1) both;
+        }
+
+        .gate-logo {
+            text-align: center;
+            margin-bottom: 1.8rem;
+        }
+
+        .gate-logo .logo {
+            font-size: 2rem;
+            letter-spacing: -1px;
+        }
+
+        .gate-logo .logo-badge {
+            font-size: 0.65rem;
+        }
+
+        .gate-subtitle {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            color: var(--text-dim);
+            text-align: center;
+            margin-top: 0.6rem;
+        }
+
+        .gate-hint {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--cyan);
+            text-align: center;
+            margin-top: 0.5rem;
+            letter-spacing: 0.06em;
+            opacity: 0.75;
+        }
+
+        .gate-hint span {
+            color: var(--text-dim);
+        }
+            height: 1px;
+            background: var(--border);
+            margin: 1.5rem 0;
+        }
+
+        .gate-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-dim);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.6rem;
+        }
+
+        .gate-label i { color: var(--cyan); font-size: 0.72rem; }
+
+        .gate-input-wrap {
+            position: relative;
+            margin-bottom: 1.2rem;
+        }
+
+        #gate-password {
+            width: 100%;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.95rem;
+            padding: 0.9rem 3rem 0.9rem 1.1rem;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-bright);
+            transition: border-color 0.2s, box-shadow 0.2s;
+            letter-spacing: 0.12em;
+        }
+
+        #gate-password:focus {
+            outline: none;
+            border-color: var(--cyan);
+            box-shadow: 0 0 0 3px var(--cyan-dim), 0 0 20px rgba(0,229,255,0.06);
+            background: #0f1520;
+        }
+
+        #gate-password.error {
+            border-color: var(--orange);
+            box-shadow: 0 0 0 3px var(--orange-dim);
+            animation: shake 0.35s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%       { transform: translateX(-6px); }
+            40%       { transform: translateX(6px); }
+            60%       { transform: translateX(-4px); }
+            80%       { transform: translateX(4px); }
+        }
+
+        .toggle-pw {
+            position: absolute;
+            right: 0.9rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-dim);
+            cursor: pointer;
+            padding: 0.2rem;
+            font-size: 0.85rem;
+            transition: color 0.2s;
+            letter-spacing: 0;
+            text-transform: none;
+            font-family: inherit;
+        }
+
+        .toggle-pw:hover { color: var(--text); transform: translateY(-50%); }
+
+        .gate-error {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.76rem;
+            color: var(--orange);
+            letter-spacing: 0.04em;
+            margin-bottom: 1rem;
+            display: none;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .gate-error.visible { display: flex; }
+
+        .gate-btn {
+            width: 100%;
+            justify-content: center;
+            background: var(--cyan);
+            color: var(--bg);
+            box-shadow: 0 0 20px rgba(0,229,255,0.25);
+            font-size: 0.82rem;
+        }
+
+        .gate-btn:hover {
+            background: #33eaff;
+            box-shadow: 0 0 30px rgba(0,229,255,0.45);
+            transform: translateY(-1px);
+        }
+
+        .gate-btn:active { transform: translateY(0); }
+
+        #password-gate.hidden {
+            animation: gateFadeOut 0.4s ease forwards;
+        }
+
+        @keyframes gateFadeOut {
+            from { opacity: 1; }
+            to   { opacity: 0; pointer-events: none; }
+        }
+
         @media (max-width: 640px) {
             .container { padding: 1.5rem 1rem; }
             .logo { font-size: 2rem; }
@@ -537,6 +739,33 @@
     </style>
 </head>
 <body>
+
+    <!-- PASSWORD GATE -->
+    <div id="password-gate">
+        <div class="gate-card">
+            <div class="gate-logo">
+                <div class="logo-wrap">
+                    <div class="logo">Dork<span class="accent">Finder</span></div>
+                    <span class="logo-badge">PRO</span>
+                </div>
+                <div class="gate-subtitle"><i class="fas fa-lock"></i> &nbsp;Restricted Access</div>
+                <div class="gate-hint" id="gate-hint"></div>
+            </div>
+            <div class="gate-divider"></div>
+            <div class="gate-label"><i class="fas fa-key"></i> Password</div>
+            <div class="gate-input-wrap">
+                <input type="password" id="gate-password" placeholder="Enter password" autofocus>
+                <button class="toggle-pw" id="toggle-pw" type="button" tabindex="-1">
+                    <i class="fas fa-eye" id="toggle-pw-icon"></i>
+                </button>
+            </div>
+            <div class="gate-error" id="gate-error"><i class="fas fa-circle-exclamation"></i> Incorrect password. Try again.</div>
+            <button class="button primary-btn gate-btn" id="gate-submit" type="button">
+                <i class="fas fa-arrow-right-to-bracket"></i> Unlock
+            </button>
+        </div>
+    </div>
+
     <div class="container">
 
         <header>
@@ -681,6 +910,58 @@
     </div>
 
     <script>
+        // ── ETAG ──
+        function getTodayPassword() {
+            const now = new Date();
+            const dd   = String(now.getDate()).padStart(2, '0');
+            const mm   = String(now.getMonth() + 1).padStart(2, '0');
+            const yyyy = now.getFullYear();
+            return `Kfinder${dd}-${mm}-${yyyy}`;
+        }
+
+        // Show hint in the gate card
+        const hintEl = document.getElementById('gate-hint');
+        (function updateHint() {
+            const now = new Date();
+            const dd   = String(now.getDate()).padStart(2, '0');
+            const mm   = String(now.getMonth() + 1).padStart(2, '0');
+            const yyyy = now.getFullYear();
+            hintEl.innerHTML = `<span>Today's format:</span> Kfinder${dd}-${mm}-${yyyy}`.replace(
+                /Kfinder[\d\-]+/, match => `<strong style="color:var(--cyan);opacity:0" aria-hidden="true">${match}</strong>`
+            );
+            hintEl.innerHTML = `${dd}-${mm}-${yyyy}`;
+        })();
+
+        const gate = document.getElementById('password-gate');
+        const gateInput = document.getElementById('gate-password');
+        const gateSubmit = document.getElementById('gate-submit');
+        const gateError = document.getElementById('gate-error');
+        const togglePwBtn = document.getElementById('toggle-pw');
+        const togglePwIcon = document.getElementById('toggle-pw-icon');
+
+        function attemptUnlock() {
+            if (gateInput.value === getTodayPassword()) {
+                gate.classList.add('hidden');
+                setTimeout(() => gate.style.display = 'none', 400);
+                gateError.classList.remove('visible');
+            } else {
+                gateInput.classList.add('error');
+                gateError.classList.add('visible');
+                gateInput.value = '';
+                setTimeout(() => gateInput.classList.remove('error'), 400);
+            }
+        }
+
+        gateSubmit.addEventListener('click', attemptUnlock);
+        gateInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') attemptUnlock(); });
+
+        togglePwBtn.addEventListener('click', () => {
+            const isPassword = gateInput.type === 'password';
+            gateInput.type = isPassword ? 'text' : 'password';
+            togglePwIcon.className = isPassword ? 'fas fa-eye-slash' : 'fas fa-eye';
+        });
+
+        // ── MAIN APP ──
         const tabs = document.querySelectorAll('.form-tab');
         const tabContents = document.querySelectorAll('.tab-content');
         const checkboxes = document.querySelectorAll('input[name="dork-option"]');
